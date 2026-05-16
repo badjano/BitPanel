@@ -1,6 +1,6 @@
 # BitPanel
 
-BitPanel is a small **open-source toy**: thirty-two toggles form a colour playground for one RGB LED, with a **Raspberry Pi Pico** (MicroPython) reading switches via shift registers and applying a few playful transforms.
+BitPanel is a small **open-source toy**: toggles set a **24-bit RGB** colour (8 bits per channel) on one LED, with a **Raspberry Pi Pico** (MicroPython) reading switches via shift registers and applying a few playful transforms.
 
 This repo exists so **other people can build it**. Nothing here is sold or warranted—see **[Disclaimer](#disclaimer)** below.
 
@@ -17,8 +17,8 @@ This repo exists so **other people can build it**. Nothing here is sold or warra
 | Item | Notes |
 |------|--------|
 | Raspberry Pi Pico | MicroPython build with `neopixel` support |
-| 74HC165 shift registers × 4 | 32 parallel inputs, three-wire serial chain to the Pico |
-| Toggles × 32 | Match hole size in Blender script (default ~12 mm bush; measure yours) |
+| 74HC165 shift registers × 4 | Panel switch inputs (32 lines on default plate; **24 bits** drive RGB) |
+| Toggles | **24** for colour (R/G/B × 8), or **32** on the default plate with eight spare / unmapped — match `BIT_PERM` in `pico/hw_config.py` |
 | Tactile switches × 4 | Random / Organize / Shift up / Shift down |
 | WS2812 (“NeoPixel”) LED × 1 | Or small NeoPixel PCB |
 | Resistors | Pull-ups as needed (Pico has internal pulls on GPIO buttons) |

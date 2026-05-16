@@ -1,5 +1,10 @@
 # SPDX-License-Identifier: MIT
-"""Read parallel inputs from a chain of 74HC165 shift registers."""
+"""Read parallel inputs from a chain of 74HC165 shift registers.
+
+Default width is 32 (four chips × 8) for the stock plate. Colour uses 24 bits
+after ``BIT_PERM`` / ``MASK24`` in ``main.py`` — reduce ``num_bits`` if you only
+populate three registers (24 switches).
+"""
 
 import time
 from machine import Pin

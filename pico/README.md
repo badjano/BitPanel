@@ -1,6 +1,6 @@
 # BitPanel — Pico firmware & wiring
 
-**MicroPython** on a **Raspberry Pi Pico**: read **32** switches through **four 74HC165** shift registers, four **mode buttons** on GPIO, one **NeoPixel** for RGB output.
+**MicroPython** on a **Raspberry Pi Pico**: read panel switches through **four 74HC165** shift registers, drive one **NeoPixel** from a **24-bit RGB** word (8 bits per channel), plus four **mode buttons** on GPIO.
 
 ← **[Project overview](../README.md)** · Panel plate: **[blender/README.md](../blender/README.md)**
 
@@ -10,7 +10,7 @@
 |------|------|
 | `main.py` | Main loop, buttons, LED update |
 | `hw_config.py` | Pins, `SHIFT_MSB_FIRST`, `BIT_PERM` |
-| `shift165.py` | Parallel load + clock in 32 bits |
+| `shift165.py` | Parallel load + clock in raw switch word (32 lines on default plate) |
 | `bits_ops.py` | RGB pack/unpack, random / quantize / rotate |
 
 ### Behaviour
@@ -22,7 +22,7 @@
 
 ## Wiring
 
-### Shift registers (32 inputs, 3 Pico pins)
+### Shift registers (panel switches, 3 Pico pins)
 
 Four **74HC165** devices chained:
 
@@ -32,7 +32,7 @@ Four **74HC165** devices chained:
 - First chip serial **in** often tied **LOW** (match `SHIFT_MSB_FIRST` in `hw_config.py`).
 - **CE** / inhibit: enable shifting when clocking (often tied low).
 
-Each ’165 latches eight toggles on **parallel load**; firmware clocks **32** edges and samples **DATA** (`shift165.py`).
+Each ’165 latches eight toggles on **parallel load**; firmware clocks one edge per switch line and samples **DATA** (`shift165.py`). Only **24** mapped bits form the RGB colour (`BIT_PERM`, then `MASK24`).
 
 **Ground**: common between Pico, registers, switches, and LED return.
 

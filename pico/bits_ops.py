@@ -27,18 +27,6 @@ def rgb_to_word(r: int, g: int, b: int) -> int:
     return (r & 0xFF) | ((g & 0xFF) << 8) | ((b & 0xFF) << 16)
 
 
-def rol32(x: int, n: int) -> int:
-    n &= 31
-    x &= 0xFFFFFFFF
-    return ((x << n) | (x >> (32 - n))) & 0xFFFFFFFF
-
-
-def ror32(x: int, n: int) -> int:
-    n &= 31
-    x &= 0xFFFFFFFF
-    return ((x >> n) | (x << (32 - n))) & 0xFFFFFFFF
-
-
 def rol24(x: int, n: int) -> int:
     """Rotate visible RGB bits only (keeps 'color energy' on the LED)."""
     n %= 24
@@ -54,10 +42,6 @@ def ror24(x: int, n: int) -> int:
 
 def random_word24() -> int:
     return urandom.getrandbits(24)
-
-
-def random_word32() -> int:
-    return urandom.getrandbits(32)
 
 
 def organize_quantize_rgb(word: int, step: int = 32) -> int:

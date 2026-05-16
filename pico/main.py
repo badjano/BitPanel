@@ -1,9 +1,12 @@
 # SPDX-License-Identifier: MIT
 """
-BitPanel controller: 32 switch bits → RGB NeoPixel, plus modifier buttons.
+BitPanel controller: panel switches → 24-bit RGB NeoPixel, plus modifier buttons.
+
+Colour is always 24 bits (R, G, B × 8). Shift registers may read more switch
+lines; only the lower 24 bits are used for the LED after mapping (see MASK24).
 
 Modifier actions (edge-triggered):
-  Random     — replace working color with random bits (24-bit RGB by default).
+  Random     — replace working colour with random 24-bit RGB.
   Organize   — quantize RGB channels to steps (see bits_ops.organize_quantize_rgb).
   Shift up   — rotate the 24 RGB bits left by one (wraps within color bits).
   Shift down — rotate the 24 RGB bits right by one.

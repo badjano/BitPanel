@@ -1,6 +1,6 @@
 # BitPanel — panel plate (Blender)
 
-Parametric **top plate** for 32 toggles, four mode buttons, one LED hole, corner mounts, and an underside **Pico pocket**.
+Parametric **top plate** for an **8×4** toggle grid (32 holes on the default layout), four mode buttons, one LED hole, corner mounts, and an underside **Pico pocket**. Firmware colour is **24-bit RGB** — wire **24** toggles to colour bits or map 32 positions via `pico/hw_config.py` (`BIT_PERM`).
 
 ← **[Project overview](../README.md)** · Firmware & wiring: **[pico/README.md](../pico/README.md)**
 
