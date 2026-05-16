@@ -4,29 +4,57 @@ BitPanel is a small **open-source toy**: thirty-two toggles form a colour playgr
 
 This repo exists so **other people can build it**. Nothing here is sold or warranted—see **[Disclaimer](#disclaimer)** below.
 
-## Contents
+## Documentation
 
-| Path | What |
-|------|------|
-| `pico/` | MicroPython firmware (`main.py` boots at power-on once copied to the Pico) |
-| `blender/` | Parametric plate (`bitpanel_case.py`; UI or `--background` export → `blender/export/bitpanel_plate.stl`) |
-| `docs/SETUP_AND_ASSEMBLY.md` | BOM-style notes, wiring concepts, firmware, assembly order |
+| Guide | Contents |
+|-------|----------|
+| **[blender/README.md](blender/README.md)** | Parametric panel plate, STL export, printing and mechanical fit-up |
+| **[pico/README.md](pico/README.md)** | Wiring (shift registers, buttons, NeoPixel), firmware, bring-up |
+| **[blender/export/README.md](blender/export/README.md)** | Pre-built `bitpanel_plate.stl` (optional; regenerate from the script) |
 
-## Quick start (builders)
+## Parts (starting point)
 
-Read **`docs/SETUP_AND_ASSEMBLY.md`**. Tune `pico/hw_config.py` to match how you wired the toggles and shift-register chain; tune **`PARAMETERS`** in `blender/bitpanel_case.py` to match your hardware geometry before exporting STL/3MF.
+| Item | Notes |
+|------|--------|
+| Raspberry Pi Pico | MicroPython build with `neopixel` support |
+| 74HC165 shift registers × 4 | 32 parallel inputs, three-wire serial chain to the Pico |
+| Toggles × 32 | Match hole size in Blender script (default ~12 mm bush; measure yours) |
+| Tactile switches × 4 | Random / Organize / Shift up / Shift down |
+| WS2812 (“NeoPixel”) LED × 1 | Or small NeoPixel PCB |
+| Resistors | Pull-ups as needed (Pico has internal pulls on GPIO buttons) |
+| Power | USB for Pico; NeoPixel level / voltage per your pixel datasheet |
+| Fasteners | Panel screws for toggles; M3 or similar for corner holes if used |
+| Wire, solder, perfboard or PCB | Optional custom PCB for shift registers |
+
+Always measure **your** switch bushings and pixels before printing. See **[blender/README.md](blender/README.md)** for plate geometry.
+
+## Assembly order (overview)
+
+1. Print and dry-fit the plate — **[blender/README.md](blender/README.md)**
+2. Mount toggles, mode buttons, and LED
+3. Wire electronics and flash firmware — **[pico/README.md](pico/README.md)**
+4. Tune `hw_config.py` and `PARAMETERS` in `bitpanel_case.py` to match your build
+
+## Troubleshooting
+
+| Symptom | Where to look |
+|--------|----------------|
+| Wrong bit order | [pico/README.md](pico/README.md) — `SHIFT_MSB_FIRST`, `BIT_PERM` |
+| Random flicker / bad reads | [pico/README.md](pico/README.md) — power, wiring length, clock vs data |
+| LED wrong colour | [pico/README.md](pico/README.md) — RGB packing, NeoPixel wiring |
+| Holes / fit wrong | [blender/README.md](blender/README.md) — `PARAMETERS`, re-export STL |
+
+## Safety
+
+- Double-check **power polarity** before applying USB or LED supply.
+- NeoPixels can draw **surprising current** at full white — size wiring and USB supply accordingly.
 
 ## Licensing
 
 - **Software** (`pico/`): **[MIT License](LICENSE)**
-- **Hardware design materials** (e.g. `blender/` and printed artefacts derived from them): **[CERN-OHL-P-Version-2](LICENSE-HARDWARE)** (CERN Open Hardware Licence v2 — Permissive)
+- **Hardware design materials** (`blender/` and derivatives): **[CERN-OHL-P-Version-2](LICENSE-HARDWARE)**
 
-SPDX:
-
-- Software: `SPDX-License-Identifier: MIT`
-- Hardware: `SPDX-License-Identifier: CERN-OHL-P-2.0`
-
-If you redistribute adapted hardware designs, follow the notice requirements in **`LICENSE-HARDWARE`**.
+SPDX: `MIT` (software), `CERN-OHL-P-2.0` (hardware). If you redistribute adapted hardware designs, follow the notice requirements in **`LICENSE-HARDWARE`**.
 
 ## Disclaimer
 
