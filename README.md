@@ -8,6 +8,7 @@ This repo exists so **other people can build it**. Nothing here is sold or warra
 
 | Guide | Contents |
 |-------|----------|
+| **[web/README.md](web/README.md)** | Browser sim — 24 toggles, flip RGB bits (no hardware) |
 | **[blender/README.md](blender/README.md)** | Parametric panel plate, STL export, printing and mechanical fit-up |
 | **[pico/README.md](pico/README.md)** | Wiring (shift registers, buttons, NeoPixel), firmware, bring-up |
 | **[blender/export/README.md](blender/export/README.md)** | Pre-built `bitpanel_plate.stl` (optional; regenerate from the script) |

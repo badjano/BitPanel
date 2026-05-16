@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BitPanel — web</title>
+  <style>
+    :root {
+      --bg: #12141a;
+      --panel: #1c2029;
+      --border: #2e3544;
+      --text: #e8eaef;
+      --muted: #8b93a7;
+      --off: #2a3140;
+      --on-r: #e85d5d;
+      --on-g: #5dce8a;
+      --on-b: #5b9cf5;
+      --swatch-ring: #3d4658;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem 2rem;
+    }
+
+    header {
+      text-align: center;
+      max-width: 32rem;
+      margin-bottom: 1.25rem;
+    }
+
+    header h1 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin: 0 0 0.35rem;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .preview {
+      width: min(100%, 20rem);
+      aspect-ratio: 2 / 1;
+      border-radius: 12px;
+      border: 3px solid var(--swatch-ring);
+      background: #000;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    .meta {
+      font-family ui-monospace, "Cascadia Code", monospace;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.5rem;
+    }
+
+    .meta span { color: var(--muted); font-size: 0.85rem; margin-right: 0.5rem; }
+
+    .board {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.1rem 1.15rem;
+      max-width: 100%;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 2.5rem repeat(8, minmax(2.25rem, 1fr));
+      gap: 0.35rem;
+      align-items: center;
+      margin-bottom: 0.35rem;
+    }
+
+    .row:last-child { margin-bottom: 0; }
+
+    .row-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .row-label.r { color: var(--on-r); }
+    .row-label.g { color: var(--on-g); }
+    .row-label.b { color: var(--on-b); }
+
+    .bit-labels {
+      display: grid;
+      grid-template-columns: 2.5rem repeat(8, minmax(2.25rem, 1fr));
+      gap: 0.35rem;
+      margin-bottom: 0.25rem;
+      padding: 0 0 0.15rem;
+    }
+
+    .bit-labels span {
+      text-align: center;
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    button.bit {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      min-height: 2.5rem;
+      background: var(--off);
+      color: var(--muted);
+      font-family: ui-monospace, monospace;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s, border-color 0.12s, transform 0.08s;
+    }
+
+    button.bit:hover { border-color: #4a5568; }
+
+    button.bit:active { transform: scale(0.96); }
+
+    button.bit.on {
+      color: #0d1117;
+      font-weight: 700;
+      border-color: transparent;
+    }
+
+    button.bit.on.ch-r { background: var(--on-r); }
+    button.bit.on.ch-g { background: var(--on-g); }
+    button.bit.on.ch-b { background: var(--on-b); }
+
+    footer {
+      margin-top: 1.25rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    footer a { color: #7eb8ff; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>BitPanel</h1>
+    <p>24 toggles — 8 bits each for <strong>R</strong>, <strong>G</strong>, and <strong>B</strong>. Click to flip a bit.</p>
+  </header>
+
+  <div class="preview" id="swatch" role="img" aria-label="Current colour"></div>
+  <div class="meta"><span>RGB</span><span id="hex">#000000</span></div>
+
+  <div class="board" id="board"></div>
+
+  <footer>
+    Same bit layout as <a href="https://github.com/badjano/BitPanel/tree/main/pico">hardware firmware</a>.
+    Open <code>index.html</code> locally or host the <code>web/</code> folder.
+  </footer>
+
+  <script type="module">
+    import { wordToRgb, rgbToHex, channelBitIndex } from "./bitpanel.js";
+
+    const MASK24 = 0xffffff;
+    let word = 0;
+
+    const swatch = document.getElementById("swatch");
+    const hexEl = document.getElementById("hex");
+    const board = document.getElementById("board");
+
+    function renderPreview() {
+      const { r, g, b } = wordToRgb(word);
+      swatch.style.background = `rgb(${r}, ${g}, ${b})`;
+      hexEl.textContent = rgbToHex(r, g, b).toUpperCase();
+    }
+
+    function isBitOn(bit) {
+      return (word >> bit) & 1;
+    }
+
+    function toggleBit(bit) {
+      word ^= 1 << bit;
+      word &= MASK24;
+      renderPreview();
+      const btn = board.querySelector(`[data-bit="${bit}"]`);
+      btn.classList.toggle("on", isBitOn(bit));
+      btn.textContent = isBitOn(bit) ? "1" : "0";
+      btn.setAttribute("aria-pressed", isBitOn(bit) ? "true" : "false");
+    }
+
+    function buildBoard() {
+      const labels = document.createElement("div");
+      labels.className = "bit-labels";
+      labels.innerHTML = "<span></span>" + Array.from({ length: 8 }, (_, i) => `<span>${7 - i}</span>`).join("");
+      board.appendChild(labels);
+
+      const channels = [
+        { name: "R", class: "r", base: 0 },
+        { name: "G", class: "g", base: 8 },
+        { name: "B", class: "b", base: 16 },
+      ];
+
+      for (const ch of channels) {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `<span class="row-label ${ch.class}">${ch.name}</span>`;
+
+        for (let i = 0; i < 8; i++) {
+          const bit = ch.base + i;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = `bit ch-${ch.class.toLowerCase()}`;
+          btn.dataset.bit = String(bit);
+          btn.title = `${ch.name}${channelBitIndex(bit)} (bit ${bit})`;
+          btn.setAttribute("aria-pressed", "false");
+          btn.textContent = "0";
+          btn.addEventListener("click", () => toggleBit(bit));
+          row.appendChild(btn);
+        }
+        board.appendChild(row);
+      }
+    }
+
+    buildBoard();
+    renderPreview();
+  </script>
+</body>
+</html>
