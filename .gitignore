@@ -1,0 +1,15 @@
+# Override global gitignore that ignores docs/
+!docs/
+!docs/**
+
+# Python / MicroPython
+__pycache__/
+*.py[cod]
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Blender working files (keep exported STL in blender/export/)
+*.blend1
+*.blend2
