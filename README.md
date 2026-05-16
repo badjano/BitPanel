@@ -4,6 +4,8 @@ BitPanel is a small **open-source toy**: toggles set a **24-bit RGB** colour (8 
 
 This repo exists so **other people can build it**. Nothing here is sold or warranted—see **[Disclaimer](#disclaimer)** below.
 
+**Play in the browser:** [https://badjano.github.io/BitPanel/](https://badjano.github.io/BitPanel/) (GitHub Pages — 24-bit RGB toggles, no install).
+
 ## Documentation
 
 | Guide | Contents |
